@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
@@ -27,8 +28,9 @@ export default function MobileNav({ links }: MobileNavProps) {
         {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 md:hidden">
+      {open &&
+        createPortal(
+          <div className="fixed inset-0 z-[200] md:hidden">
           <button
             type="button"
             aria-label="Close mobile menu"
@@ -71,8 +73,9 @@ export default function MobileNav({ links }: MobileNavProps) {
               </nav>
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </>
   );
 }

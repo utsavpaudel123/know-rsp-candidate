@@ -186,12 +186,12 @@ export default function AboutPage() {
               <span className="font-medium text-foreground">Open a GitHub issue</span>{" "}
               —{" "}
               <a
-                href="https://github.com/your-org/know-rsp-candidate/issues"
+                href="https://github.com/xafold/know-rsp-candidate/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                github.com/your-org/know-rsp-candidate
+                github.com/xafold/know-rsp-candidate
               </a>
             </li>
             <li>
