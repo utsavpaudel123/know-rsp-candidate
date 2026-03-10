@@ -1,11 +1,12 @@
- "use client";
+"use client";
 
+import MobileNav from "@/components/MobileNav";
+import ThemeToggle from "@/components/ThemeToggle";
+import { cn } from "@/lib/utils";
+import { ChartColumnBig, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, ChartColumnBig, ShieldCheck } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
-import MobileNav from "@/components/MobileNav";
-import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Directory" },
@@ -23,8 +24,15 @@ export default function Navbar() {
           <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <div className="flex min-w-0 items-center gap-4">
               <Link href="/" className="flex min-w-0 items-center gap-3">
-                <div className="surface-contrast flex size-11 shrink-0 items-center justify-center rounded-2xl">
-                  <Bell className="h-5 w-5" />
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl overflow-hidden shadow-sm ring-1 ring-border/50">
+                  <Image
+                    src="/logo.png"
+                    alt="Know RSP Logo"
+                    width={44}
+                    height={44}
+                    className="object-cover"
+                    priority
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="font-display truncate text-lg font-semibold text-foreground sm:text-xl">
@@ -51,7 +59,9 @@ export default function Navbar() {
             <nav className="hidden md:flex items-center rounded-full border border-border/90 bg-[var(--surface-soft)] p-1">
               {navLinks.map((link) => {
                 const isActive =
-                  link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
 
                 return (
                   <Link
@@ -61,7 +71,7 @@ export default function Navbar() {
                       "rounded-full px-4 py-2 text-sm font-medium transition-all",
                       isActive
                         ? "bg-[var(--surface-inverse)] text-[var(--surface-inverse-foreground)] shadow-[0_10px_24px_rgba(10,14,20,0.16)]"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {link.label}
