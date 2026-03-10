@@ -1,17 +1,17 @@
 "use client";
 
+import { Candidate } from "@/lib/types";
 import { useEffect, useState } from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
 } from "recharts";
-import { Candidate } from "@/lib/types";
 
 interface VoteChartProps {
   candidate: Candidate;
@@ -49,6 +49,29 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   );
 }
 
+function getPartyColor(partyName: string): string {
+  const normalized = partyName.toLowerCase();
+
+  if (normalized.includes("rsp") || normalized.includes("rastriya swatantra")) {
+    return "#0ea5e9"; // Sky blue
+  }
+  if (normalized.includes("cpn-uml") || normalized.includes("uml")) {
+    return "#8B0000"; // Dark red
+  }
+  if (normalized.includes("congress")) {
+    return "#16a34a"; // Green
+  }
+  if (
+    normalized.includes("ncp") ||
+    normalized.includes("maoist") ||
+    normalized.includes("communist")
+  ) {
+    return "#5c0002"; // Liver red
+  }
+
+  return "#9333ea"; // Default fallback (purple)
+}
+
 export default function VoteChart({ candidate }: VoteChartProps) {
   const { votesReceived, runnerUp, voteSharePercent, winMargin, name } =
     candidate;
@@ -70,12 +93,12 @@ export default function VoteChart({ candidate }: VoteChartProps) {
     {
       label: name.split(" ")[0], // first name for brevity
       votes: votesReceived,
-      fill: "#1a4fa0",
+      fill: getPartyColor("RSP"),
     },
     {
       label: runnerUp.name.split(" ")[0],
       votes: runnerUp.votes,
-      fill: "#9333ea",
+      fill: getPartyColor(runnerUp.party),
     },
   ];
 
@@ -132,7 +155,10 @@ export default function VoteChart({ candidate }: VoteChartProps) {
                 margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
                 barCategoryGap="30%"
               >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 12 }}
@@ -166,12 +192,15 @@ export default function VoteChart({ candidate }: VoteChartProps) {
         <div className="flex items-center gap-1.5 rounded-full border border-border/80 bg-[var(--surface-soft)] px-3 py-2">
           <span
             className="inline-block h-3 w-3 rounded-sm"
-            style={{ backgroundColor: "var(--rsp-blue)" }}
+            style={{ backgroundColor: getPartyColor("RSP") }}
           />
           {name} (RSP)
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-border/80 bg-[var(--surface-soft)] px-3 py-2">
-          <span className="inline-block h-3 w-3 rounded-sm bg-purple-600" />
+          <span
+            className="inline-block h-3 w-3 rounded-sm"
+            style={{ backgroundColor: getPartyColor(runnerUp.party) }}
+          />
           {runnerUp.name} ({runnerUp.party})
         </div>
       </div>
