@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { CandidateFilters, EducationLevel } from "@/lib/types";
+import { ALL_DISTRICTS, PROFESSION_CATEGORIES } from "@/lib/candidates";
 
 interface FilterPanelProps {
   filters: CandidateFilters;
@@ -21,14 +22,14 @@ const PROVINCES = [
   "Sudurpashchim",
 ];
 
-const EDUCATION_LEVELS: EducationLevel[] = [
-  "SLC",
-  "Intermediate",
-  "+2",
-  "Bachelors",
-  "Masters",
-  "PhD",
-  "Other",
+const EDUCATION_LEVELS: { level: EducationLevel; label: string }[] = [
+  { level: "SLC", label: "SLC (Grade 10)" },
+  { level: "Intermediate", label: "Intermediate" },
+  { level: "+2", label: "+2 / A-Level" },
+  { level: "Bachelors", label: "Bachelors" },
+  { level: "Masters", label: "Masters" },
+  { level: "PhD", label: "PhD / Doctorate" },
+  { level: "Other", label: "Other" },
 ];
 
 const GENDERS = ["Male", "Female", "Other"];
@@ -38,21 +39,33 @@ function SectionHeader({
   title,
   expanded,
   onToggle,
+  badge,
 }: {
   title: string;
   expanded: boolean;
   onToggle: () => void;
+  badge?: number;
 }) {
   return (
     <button
       onClick={onToggle}
       className="flex w-full items-center justify-between gap-3 py-1 text-left text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
     >
-      <span>{title}</span>
+      <span className="flex items-center gap-2">
+        {title}
+        {badge ? (
+          <span
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[0.65rem] font-bold text-white"
+            style={{ backgroundColor: "var(--rsp-blue)" }}
+          >
+            {badge}
+          </span>
+        ) : null}
+      </span>
       {expanded ? (
-        <ChevronUp className="h-4 w-4" />
+        <ChevronUp className="h-4 w-4 shrink-0" />
       ) : (
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className="h-4 w-4 shrink-0" />
       )}
     </button>
   );
@@ -100,12 +113,15 @@ export default function FilterPanel({
   filteredCount,
 }: FilterPanelProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [districtSearch, setDistrictSearch] = useState("");
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({
     province: true,
+    district: false,
     electionType: true,
     gender: true,
+    profession: false,
     education: false,
     age: false,
     voteShare: false,
@@ -119,6 +135,7 @@ export default function FilterPanel({
     onChange({
       query: filters.query,
       provinces: [],
+      districts: [],
       educationLevels: [],
       ageMin: 0,
       ageMax: 120,
@@ -127,14 +144,18 @@ export default function FilterPanel({
       voteShareMax: 100,
       electionType: [],
       winMarginMin: 0,
+      professionCategories: [],
     });
+    setDistrictSearch("");
   };
 
   const hasActiveFilters =
     filters.provinces.length > 0 ||
+    filters.districts.length > 0 ||
     filters.educationLevels.length > 0 ||
     filters.gender.length > 0 ||
     filters.electionType.length > 0 ||
+    filters.professionCategories.length > 0 ||
     filters.ageMin > 0 ||
     filters.ageMax < 120 ||
     filters.voteShareMin > 0 ||
@@ -143,9 +164,17 @@ export default function FilterPanel({
 
   const activeCount =
     filters.provinces.length +
+    filters.districts.length +
     filters.gender.length +
     filters.educationLevels.length +
-    filters.electionType.length;
+    filters.electionType.length +
+    filters.professionCategories.length;
+
+  const visibleDistricts = districtSearch.trim()
+    ? ALL_DISTRICTS.filter((d) =>
+        d.toLowerCase().includes(districtSearch.toLowerCase())
+      )
+    : ALL_DISTRICTS;
 
   const panelContent = (
     <div className="flex flex-col gap-4">
@@ -161,11 +190,13 @@ export default function FilterPanel({
         </p>
       </div>
 
+      {/* Province */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
           title="Province"
           expanded={!!expandedSections.province}
           onToggle={() => toggleSection("province")}
+          badge={filters.provinces.length || undefined}
         />
         {expandedSections.province && (
           <div className="grid gap-1">
@@ -186,11 +217,54 @@ export default function FilterPanel({
         )}
       </div>
 
+      {/* District */}
+      <div className="space-y-3 border-b border-border/70 pb-4">
+        <SectionHeader
+          title="District"
+          expanded={!!expandedSections.district}
+          onToggle={() => toggleSection("district")}
+          badge={filters.districts.length || undefined}
+        />
+        {expandedSections.district && (
+          <div className="flex flex-col gap-2">
+            <input
+              type="text"
+              value={districtSearch}
+              onChange={(e) => setDistrictSearch(e.target.value)}
+              placeholder="Search district..."
+              className="h-9 w-full rounded-full border border-input bg-[var(--surface-strong)] px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
+            />
+            <div className="grid max-h-48 gap-0.5 overflow-y-auto pr-1">
+              {visibleDistricts.map((d) => (
+                <CheckboxItem
+                  key={d}
+                  label={d}
+                  checked={filters.districts.includes(d)}
+                  onChange={() =>
+                    onChange({
+                      ...filters,
+                      districts: toggleInArray(filters.districts, d),
+                    })
+                  }
+                />
+              ))}
+              {visibleDistricts.length === 0 && (
+                <p className="px-2 py-2 text-xs text-muted-foreground">
+                  No districts match.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Election Type */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
           title="Election Type"
           expanded={!!expandedSections.electionType}
           onToggle={() => toggleSection("electionType")}
+          badge={filters.electionType.length || undefined}
         />
         {expandedSections.electionType && (
           <div className="grid gap-1">
@@ -215,11 +289,13 @@ export default function FilterPanel({
         )}
       </div>
 
+      {/* Gender */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
           title="Gender"
           expanded={!!expandedSections.gender}
           onToggle={() => toggleSection("gender")}
+          badge={filters.gender.length || undefined}
         />
         {expandedSections.gender && (
           <div className="grid gap-1">
@@ -240,18 +316,53 @@ export default function FilterPanel({
         )}
       </div>
 
+      {/* Profession */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
-          title="Education Level"
+          title="Profession"
+          expanded={!!expandedSections.profession}
+          onToggle={() => toggleSection("profession")}
+          badge={filters.professionCategories.length || undefined}
+        />
+        {expandedSections.profession && (
+          <div className="grid gap-1">
+            {PROFESSION_CATEGORIES.map((cat) => (
+              <CheckboxItem
+                key={cat.label}
+                label={cat.label}
+                checked={filters.professionCategories.includes(cat.label)}
+                onChange={() =>
+                  onChange({
+                    ...filters,
+                    professionCategories: toggleInArray(
+                      filters.professionCategories,
+                      cat.label
+                    ),
+                  })
+                }
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Education */}
+      <div className="space-y-3 border-b border-border/70 pb-4">
+        <SectionHeader
+          title="Highest Education"
           expanded={!!expandedSections.education}
           onToggle={() => toggleSection("education")}
+          badge={filters.educationLevels.length || undefined}
         />
         {expandedSections.education && (
           <div className="grid gap-1">
-            {EDUCATION_LEVELS.map((level) => (
+            <p className="px-2 text-[0.7rem] text-muted-foreground">
+              Filters by each MP&apos;s highest qualification.
+            </p>
+            {EDUCATION_LEVELS.map(({ level, label }) => (
               <CheckboxItem
                 key={level}
-                label={level}
+                label={label}
                 checked={filters.educationLevels.includes(level)}
                 onChange={() =>
                   onChange({
@@ -268,6 +379,7 @@ export default function FilterPanel({
         )}
       </div>
 
+      {/* Age Range */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
           title="Age Range"
@@ -306,6 +418,7 @@ export default function FilterPanel({
         )}
       </div>
 
+      {/* Vote Share */}
       <div className="space-y-3 border-b border-border/70 pb-4">
         <SectionHeader
           title="Vote Share %"

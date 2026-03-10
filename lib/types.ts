@@ -95,6 +95,7 @@ export interface Candidate {
 export interface CandidateFilters {
   query: string;
   provinces: string[];
+  districts: string[];
   educationLevels: EducationLevel[];
   ageMin: number;
   ageMax: number;
@@ -103,6 +104,7 @@ export interface CandidateFilters {
   voteShareMax: number;
   electionType: string[];
   winMarginMin: number;
+  professionCategories: string[];
 }
 
 export type SortKey = "name" | "age" | "voteSharePercent" | "winMargin" | "constituency";
