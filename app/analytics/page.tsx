@@ -228,6 +228,50 @@ function ChartSlot({
   return <>{children}</>;
 }
 
+function renderPieLabel({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}: {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
+}) {
+  if (
+    cx == null ||
+    cy == null ||
+    midAngle == null ||
+    innerRadius == null ||
+    outerRadius == null ||
+    percent == null
+  )
+    return null;
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.55;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  if (percent < 0.05) return null;
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={13}
+      fontWeight={600}
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+}
+
 export default function AnalyticsPage() {
   const candidates = useMemo(() => getCandidates(), []);
   const [chartsReady, setChartsReady] = useState(false);
@@ -714,7 +758,7 @@ export default function AnalyticsPage() {
               title="Competition Snapshot"
               description="A quick read on whether RSP’s wins were broadly dominant, moderately comfortable, or genuinely competitive."
             />
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
               {snapshotMetrics.map((item) => (
                 <SnapshotCard key={item.label} {...item} />
               ))}
@@ -785,7 +829,7 @@ export default function AnalyticsPage() {
                 >
                   <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={voteShareBandData} margin={{ left: -10 }}>
+                      <BarChart data={voteShareBandData} margin={{ left: 0 }}>
                         <XAxis
                           dataKey="band"
                           tick={{ fontSize: 12 }}
@@ -820,7 +864,7 @@ export default function AnalyticsPage() {
                 >
                   <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={marginBandData} margin={{ left: -10 }}>
+                      <BarChart data={marginBandData} margin={{ left: 0 }}>
                         <XAxis
                           dataKey="band"
                           tick={{ fontSize: 12 }}
@@ -922,7 +966,7 @@ export default function AnalyticsPage() {
                 >
                   <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={educationData} margin={{ left: -10 }}>
+                      <BarChart data={educationData} margin={{ left: 0 }}>
                         <XAxis
                           dataKey="level"
                           tick={{ fontSize: 12 }}
@@ -957,7 +1001,7 @@ export default function AnalyticsPage() {
                 >
                   <div className="h-[280px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={ageData} margin={{ left: -10 }}>
+                      <BarChart data={ageData} margin={{ left: 0 }}>
                         <XAxis
                           dataKey="group"
                           tick={{ fontSize: 12 }}
@@ -996,14 +1040,8 @@ export default function AnalyticsPage() {
                           nameKey="gender"
                           cx="50%"
                           cy="50%"
-                          outerRadius={95}
-                          label={(props) => {
-                            const { name, percent } = props as {
-                              name: string;
-                              percent: number;
-                            };
-                            return `${name} ${((percent ?? 0) * 100).toFixed(0)}%`;
-                          }}
+                          outerRadius="42%"
+                          label={renderPieLabel}
                           labelLine={false}
                         >
                           {genderData.map((_, index) => (
