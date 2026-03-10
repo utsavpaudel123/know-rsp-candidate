@@ -1,7 +1,7 @@
 "use client";
 
 import { getCandidates } from "@/lib/getCandidates";
-import type { Candidate, EducationLevel } from "@/lib/types";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -28,134 +28,26 @@ const COLORS = [
   "#00838f",
 ];
 
-const EDUCATION_ORDER: EducationLevel[] = [
-  "SLC",
-  "Intermediate",
-  "+2",
-  "Bachelors",
-  "Masters",
-  "PhD",
-  "Other",
-];
-
-const TOP_LIST_SIZE = 5;
-const DOMINANT_SHARE_THRESHOLD = 60;
-const DOMINANT_RATIO_THRESHOLD = 2;
-const CLOSE_MARGIN_THRESHOLD = 10;
-
-type PerformanceCandidate = {
-  id: string;
-  name: string;
-  constituency: string;
-  province: string;
-  votesReceived: number;
-  totalValidVotes: number;
-  voteSharePercent: number;
-  runnerUpName: string;
-  runnerUpParty: string;
-  runnerUpVotes: number;
-  runnerUpSharePercent: number;
-  winMargin: number;
-  winMarginPercent: number;
-  winnerRunnerUpRatio: number | null;
-};
-
-type InsightItem = {
-  title: string;
-  candidate: string;
-  constituency: string;
-  value: string;
-  detail: string;
-};
-
-type SnapshotItem = {
-  label: string;
-  value: string;
-  helper: string;
-};
-
-type LeaderboardItem = {
-  id: string;
-  name: string;
-  constituency: string;
-  value: string;
-  detail: string;
-};
-
-type ProvinceSummary = {
-  province: string;
-  seats: number;
-  avgVoteShare: number;
-  avgMarginPercent: number;
-  dominantWins: number;
-  closeRaces: number;
-};
-
-function getTopEducation(candidate: Candidate): EducationLevel | null {
-  if (!candidate.education || candidate.education.length === 0) return null;
-  const sorted = [...candidate.education].sort(
-    (a, b) =>
-      EDUCATION_ORDER.indexOf(b.level) - EDUCATION_ORDER.indexOf(a.level),
-  );
-  return sorted[0]?.level ?? null;
-}
-
-function formatNumber(value: number): string {
-  return value.toLocaleString();
-}
-
-function formatPercent(value: number, decimals = 1): string {
-  return `${value.toFixed(decimals)}%`;
-}
-
-function formatRatio(value: number, decimals = 2): string {
-  return `${value.toFixed(decimals)}x`;
-}
-
-function average(values: number[]): number {
-  if (values.length === 0) return 0;
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
-}
-
-function toPerformanceCandidate(
-  candidate: Candidate,
-): PerformanceCandidate | null {
-  if (
-    candidate.electionType !== "FPTP" ||
-    candidate.votesReceived == null ||
-    candidate.totalValidVotes == null ||
-    candidate.voteSharePercent == null ||
-    candidate.runnerUp?.votes == null ||
-    candidate.winMargin == null ||
-    candidate.winMarginPercent == null
-  ) {
-    return null;
-  }
-
-  const runnerUpVotes = candidate.runnerUp.votes;
-  const runnerUpSharePercent =
-    candidate.totalValidVotes > 0
-      ? (runnerUpVotes / candidate.totalValidVotes) * 100
-      : 0;
-
-  return {
-    id: candidate.id,
-    name: candidate.name,
-    constituency: candidate.constituency.name,
-    province: candidate.constituency.province,
-    votesReceived: candidate.votesReceived,
-    totalValidVotes: candidate.totalValidVotes,
-    voteSharePercent: candidate.voteSharePercent,
-    runnerUpName: candidate.runnerUp.name,
-    runnerUpParty: candidate.runnerUp.party,
-    runnerUpVotes,
-    runnerUpSharePercent,
-    winMargin: candidate.winMargin,
-    winMarginPercent: candidate.winMarginPercent,
-    winnerRunnerUpRatio:
-      runnerUpVotes > 0 ? candidate.votesReceived / runnerUpVotes : null,
-  };
-}
+import type {
+    InsightItem,
+    LeaderboardItem,
+    PerformanceCandidate,
+    ProvinceSummary,
+    SnapshotItem,
+} from "./utils";
+import {
+    average,
+    CLOSE_MARGIN_THRESHOLD,
+    DOMINANT_RATIO_THRESHOLD,
+    DOMINANT_SHARE_THRESHOLD,
+    EDUCATION_ORDER,
+    formatNumber,
+    formatPercent,
+    formatRatio,
+    getTopEducation,
+    TOP_LIST_SIZE,
+    toPerformanceCandidate,
+} from "./utils";
 
 function SectionHeader({
   title,
@@ -241,14 +133,16 @@ function LeaderboardCard({
   title,
   description,
   items,
+  slug,
+  totalCount,
 }: {
   title: string;
   description: string;
   items: LeaderboardItem[];
+  slug: string;
+  totalCount: number;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const visibleItems = expanded ? items : items.slice(0, TOP_LIST_SIZE);
-  const hasMore = items.length > TOP_LIST_SIZE;
+  const hasMore = totalCount > TOP_LIST_SIZE;
 
   return (
     <div className="surface-card overflow-hidden p-6 sm:p-7">
@@ -265,7 +159,7 @@ function LeaderboardCard({
       ) : (
         <>
           <div className="mt-2 divide-y divide-border/70">
-            {visibleItems.map((item, index) => (
+            {items.map((item, index) => (
               <div
                 key={item.id}
                 className="grid gap-3 py-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start"
@@ -296,12 +190,12 @@ function LeaderboardCard({
             ))}
           </div>
           {hasMore && (
-            <button
-              onClick={() => setExpanded(!expanded)}
+            <Link
+              href={`/analytics/leaderboard/${slug}`}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-border/80 bg-[var(--surface-soft)] px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted/70"
             >
-              {expanded ? "Show Top 5" : `See All (${items.length})`}
-            </button>
+              See All ({totalCount})
+            </Link>
           )}
         </>
       )}
@@ -833,32 +727,44 @@ export default function AnalyticsPage() {
               <LeaderboardCard
                 title="Top Vote Totals"
                 description="Candidates with the highest raw vote counts."
-                items={topVoteTotals}
+                items={topVoteTotals.slice(0, TOP_LIST_SIZE)}
+                slug="top-votes"
+                totalCount={topVoteTotals.length}
               />
               <LeaderboardCard
                 title="Highest Vote Shares"
                 description="Candidates who captured the largest share of valid votes."
-                items={highestVoteShares}
+                items={highestVoteShares.slice(0, TOP_LIST_SIZE)}
+                slug="highest-vote-shares"
+                totalCount={highestVoteShares.length}
               />
               <LeaderboardCard
                 title="Biggest Win Margins"
                 description="Largest vote gaps over the closest opponent."
-                items={biggestMargins}
+                items={biggestMargins.slice(0, TOP_LIST_SIZE)}
+                slug="biggest-margins"
+                totalCount={biggestMargins.length}
               />
               <LeaderboardCard
                 title="Strongest Winner/Opponent Ratios"
                 description="Where the winner’s vote pile most clearly outweighed the runner-up."
-                items={strongestRatios}
+                items={strongestRatios.slice(0, TOP_LIST_SIZE)}
+                slug="strongest-ratios"
+                totalCount={strongestRatios.length}
               />
               <LeaderboardCard
                 title="Closest Races by Margin %"
                 description="Seats where the winner’s lead over the closest opponent was smallest as a share of valid votes."
-                items={closestByMarginPercent}
+                items={closestByMarginPercent.slice(0, TOP_LIST_SIZE)}
+                slug="closest-races"
+                totalCount={closestByMarginPercent.length}
               />
               <LeaderboardCard
                 title="Largest Valid Vote Pools"
                 description="Constituencies with the biggest valid-vote base."
-                items={largestValidVotePools}
+                items={largestValidVotePools.slice(0, TOP_LIST_SIZE)}
+                slug="largest-vote-pools"
+                totalCount={largestValidVotePools.length}
               />
             </div>
           </section>
