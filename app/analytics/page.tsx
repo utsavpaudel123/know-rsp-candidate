@@ -145,7 +145,10 @@ function LeaderboardCard({
   const hasMore = totalCount > TOP_LIST_SIZE;
 
   return (
-    <div className="surface-card overflow-hidden p-6 sm:p-7">
+    <div
+      id={slug}
+      className="surface-card overflow-hidden p-6 sm:p-7 scroll-mt-24"
+    >
       <div className="flex flex-col gap-2 border-b border-border/70 pb-4">
         <p className="section-kicker">Leaderboard</p>
         <h3 className="font-display text-xl font-semibold text-foreground">
