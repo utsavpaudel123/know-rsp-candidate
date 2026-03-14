@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const candidate = getCandidateById(id);
   if (!candidate) {
-    return { title: "Candidate Not Found" };
+    return { title: "MP Not Found" };
   }
 
   const title = `${candidate.name} – RSP MP, ${candidate.constituency.name}`;
@@ -105,7 +105,7 @@ export default async function CandidateProfilePage({ params }: Props) {
       "@type": "Organization",
       name: "Rastriya Swatantra Party (RSP)",
     },
-    url: `https://knowrspcandidate.vercel.app/candidate/${candidate.id}`,
+    url: `https://knowrspmp.vercel.app/candidate/${candidate.id}`,
     image: candidate.photo,
     description: candidate.biography,
     sameAs: candidate.socials?.map((social) => social.url) ?? [],
@@ -135,7 +135,7 @@ export default async function CandidateProfilePage({ params }: Props) {
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
           <div className="surface-card overflow-hidden p-6 sm:p-8 lg:p-10">
-            <p className="section-kicker">Candidate profile</p>
+            <p className="section-kicker">MP profile</p>
             <div className="mt-6 flex flex-col gap-6 lg:flex-row">
               <div className="shrink-0">
                 {candidate.photo ? (
@@ -263,7 +263,7 @@ export default async function CandidateProfilePage({ params }: Props) {
             {candidate.socials && candidate.socials.length > 0 && (
               <SectionCard
                 title="Official links"
-                description="Only official or clearly attributable candidate pages are shown."
+                description="Only official or clearly attributable MP pages are shown."
               >
                 <SocialLinks socials={candidate.socials} />
               </SectionCard>
@@ -362,7 +362,7 @@ export default async function CandidateProfilePage({ params }: Props) {
                 <div>
                   <p className="section-kicker">Profile data</p>
                   <p className="mt-2 text-base font-semibold text-foreground">
-                    This profile combines civic context, candidate background, and
+                    This profile combines civic context, MP background, and
                     election data.
                   </p>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">

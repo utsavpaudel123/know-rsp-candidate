@@ -12,7 +12,7 @@ interface SearchBarProps {
 export default function SearchBar({
   value,
   onChange,
-  placeholder = "Search candidates...",
+  placeholder = "Search MPs...",
 }: SearchBarProps) {
   return (
     <div className="surface-panel relative w-full px-3 py-2">
@@ -23,7 +23,7 @@ export default function SearchBar({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="h-11 border-0 bg-transparent pl-10 pr-3 shadow-none focus-visible:ring-0"
-        aria-label="Search candidates"
+        aria-label="Search MPs"
       />
     </div>
   );

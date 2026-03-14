@@ -26,7 +26,7 @@ type MetricConfig = {
 const metrics: Record<string, MetricConfig> = {
   "top-votes": {
     title: "Top Vote Totals",
-    description: "Candidates with the highest raw vote counts.",
+    description: "MPs with the highest raw vote counts.",
     getItems: (candidates) =>
       [...candidates]
         .sort((a, b) => b.votesReceived - a.votesReceived)
@@ -42,7 +42,7 @@ const metrics: Record<string, MetricConfig> = {
   },
   "highest-vote-shares": {
     title: "Highest Vote Shares",
-    description: "Candidates who captured the largest share of valid votes.",
+    description: "MPs who captured the largest share of valid votes.",
     getItems: (candidates) =>
       [...candidates]
         .sort((a, b) => b.voteSharePercent - a.voteSharePercent)

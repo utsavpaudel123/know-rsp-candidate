@@ -186,7 +186,7 @@ export default function FilterPanel({
           {filteredCount}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Showing {filteredCount} of {totalCount} candidates
+          Showing {filteredCount} of {totalCount} MPs
         </p>
       </div>
 

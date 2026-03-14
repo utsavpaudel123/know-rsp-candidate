@@ -106,7 +106,7 @@ export default function CandidateGrid({ initialCandidates }: CandidateGridProps)
           {filteredCandidates.length === 0 ? (
             <div className="surface-panel flex flex-col items-center justify-center gap-4 px-6 py-20 text-center">
               <p className="text-lg font-medium text-muted-foreground">
-                No candidates match your search
+                No MPs match your search
               </p>
               <p className="text-sm text-muted-foreground">
                 Try adjusting your filters or search terms.
