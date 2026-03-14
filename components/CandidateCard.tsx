@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import {
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Candidate } from "@/lib/types";
+import CompareToggleButton from "@/components/CompareToggleButton";
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -183,7 +186,10 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
 
           <div className="mt-auto flex items-center justify-between border-t border-border/70 pt-4 text-sm">
             <span className="font-medium text-foreground">Open full profile</span>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <div className="flex items-center gap-2">
+              <CompareToggleButton candidateId={id} variant="compact" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
           </div>
         </CardContent>
       </Card>
