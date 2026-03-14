@@ -145,12 +145,12 @@ export default function AboutPage() {
           </ul>
         </AboutSection>
 
-        <div className="rounded-[1.75rem] border border-amber-300/80 bg-amber-50 p-6 dark:border-amber-900/50 dark:bg-amber-900/20">
+        <div className="rounded-[1.75rem] border border-amber-300/80 bg-amber-50 p-6 dark:border-amber-500/20 dark:bg-amber-950/30">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
-            <h2 className="text-base font-semibold text-orange-800">Disclaimer</h2>
+            <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-amber-400" />
+            <h2 className="text-base font-semibold text-orange-800 dark:text-amber-200">Disclaimer</h2>
           </div>
-          <p className="text-orange-900 text-sm leading-relaxed">
+          <p className="text-orange-900 text-sm leading-relaxed dark:text-amber-100/80">
             This project is <strong>not affiliated with, endorsed by, or connected to</strong>{" "}
             the Rastriya Swatantra Party (RSP) or any other political party, government
             body, or official institution. All information is published for civic

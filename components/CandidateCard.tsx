@@ -57,7 +57,7 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
 
   return (
     <Link href={`/candidate/${id}`} className="group block h-full">
-      <Card className="h-full cursor-pointer border-border/80 transition-transform duration-200 hover:-translate-y-1">
+      <Card className="h-full cursor-pointer border-border/80 transition-all duration-200 hover:-translate-y-1 hover:border-[var(--rsp-blue)]/30 hover:shadow-[0_20px_48px_rgba(12,15,22,0.12)]">
         <CardHeader className="pb-0">
           <div className="flex items-start gap-4">
             <div className="shrink-0">
