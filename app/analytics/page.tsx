@@ -3,18 +3,18 @@
 import { getCandidates } from "@/lib/getCandidates";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import {
-    Bar,
-    BarChart,
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Bar,
+  BarChart,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 
 const COLORS = [
@@ -29,24 +29,24 @@ const COLORS = [
 ];
 
 import type {
-    InsightItem,
-    LeaderboardItem,
-    PerformanceCandidate,
-    ProvinceSummary,
-    SnapshotItem,
+  InsightItem,
+  LeaderboardItem,
+  PerformanceCandidate,
+  ProvinceSummary,
+  SnapshotItem,
 } from "./utils";
 import {
-    average,
-    CLOSE_MARGIN_THRESHOLD,
-    DOMINANT_RATIO_THRESHOLD,
-    DOMINANT_SHARE_THRESHOLD,
-    EDUCATION_ORDER,
-    formatNumber,
-    formatPercent,
-    formatRatio,
-    getTopEducation,
-    TOP_LIST_SIZE,
-    toPerformanceCandidate,
+  average,
+  CLOSE_MARGIN_THRESHOLD,
+  DOMINANT_RATIO_THRESHOLD,
+  DOMINANT_SHARE_THRESHOLD,
+  EDUCATION_ORDER,
+  formatNumber,
+  formatPercent,
+  formatRatio,
+  getTopEducation,
+  TOP_LIST_SIZE,
+  toPerformanceCandidate,
 } from "./utils";
 
 function SectionHeader({
@@ -272,13 +272,15 @@ function renderPieLabel({
   );
 }
 
+const emptySubscribe = () => () => {};
+
 export default function AnalyticsPage() {
   const candidates = useMemo(() => getCandidates(), []);
-  const [chartsReady, setChartsReady] = useState(false);
-
-  useEffect(() => {
-    setChartsReady(true);
-  }, []);
+  const chartsReady = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const performanceCandidates = useMemo(
     () =>
@@ -399,7 +401,7 @@ export default function AnalyticsPage() {
 
     return [
       {
-        title: "Top Voted Candidate",
+        title: "Top Voted MP",
         candidate: topVotes.name,
         constituency: topVotes.constituency,
         value: formatNumber(topVotes.votesReceived),
@@ -652,7 +654,8 @@ export default function AnalyticsPage() {
         <div className="surface-panel p-12 text-center text-muted-foreground">
           <p className="text-lg font-medium">No data available yet</p>
           <p className="mt-1 text-sm">
-            Candidate data will appear here once `candidates.json` is populated.
+            MP data will appear here once the province data files
+            are populated.
           </p>
         </div>
       )}
@@ -671,7 +674,7 @@ export default function AnalyticsPage() {
                 Election analytics
               </p>
               <h1 className="display-title mt-4 text-[var(--surface-inverse-foreground)]">
-                A results-board view of how RSP candidates won.
+                A results-board view of how RSP MPs won.
               </h1>
               <p
                 className="mt-5 max-w-3xl text-base leading-7 sm:text-lg"
@@ -773,14 +776,14 @@ export default function AnalyticsPage() {
             <div className="grid gap-6 xl:grid-cols-2">
               <LeaderboardCard
                 title="Top Vote Totals"
-                description="Candidates with the highest raw vote counts."
+                description="MPs with the highest raw vote counts."
                 items={topVoteTotals.slice(0, TOP_LIST_SIZE)}
                 slug="top-votes"
                 totalCount={topVoteTotals.length}
               />
               <LeaderboardCard
                 title="Highest Vote Shares"
-                description="Candidates who captured the largest share of valid votes."
+                description="MPs who captured the largest share of valid votes."
                 items={highestVoteShares.slice(0, TOP_LIST_SIZE)}
                 slug="highest-vote-shares"
                 totalCount={highestVoteShares.length}
@@ -956,7 +959,7 @@ export default function AnalyticsPage() {
           <section className="space-y-4">
             <SectionHeader
               title="Demographic Profile"
-              description="Background context on the age, gender, and education profile of the winning candidates."
+              description="Background context on the age, gender, and education profile of the winning MPs."
             />
             <div className="grid gap-6 xl:grid-cols-3">
               <ChartCard title="Education Distribution (Highest Level)">

@@ -30,8 +30,8 @@ export default function AboutPage() {
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
               Know RSP is a citizen-led public directory focused on who has been
-              elected, what is publicly knowable about them, and how that data is
-              verified before it reaches the site.
+              elected, what is publicly knowable about them, and how that data
+              is verified before it reaches the site.
             </p>
           </div>
 
@@ -39,7 +39,7 @@ export default function AboutPage() {
             <p className="section-kicker">Project principles</p>
             <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
               <li>Verified public records over speculation</li>
-              <li>Structured candidate data with source trails</li>
+              <li>Structured MP data with source trails</li>
               <li>Open corrections and transparent limitations</li>
             </ul>
           </div>
@@ -47,52 +47,70 @@ export default function AboutPage() {
       </section>
 
       <div className="mt-6 grid gap-6">
-        <AboutSection icon={<BookOpen className="h-5 w-5" />} title="Project Purpose">
+        <AboutSection
+          icon={<BookOpen className="h-5 w-5" />}
+          title="Project Purpose"
+        >
           <p>
-            <strong>Know RSP</strong> is a citizen-led civic transparency initiative
-            dedicated to making information about elected representatives of the Rastriya
-            Swatantra Party (RSP) freely accessible to the public.
+            <strong>Know RSP</strong> is a citizen-led civic transparency
+            initiative dedicated to making information about elected
+            representatives of the Rastriya Swatantra Party (RSP) freely
+            accessible to the public.
           </p>
           <p className="mt-3">
-            Following the 2026 Nepal General Election, we believe every citizen has the
-            right to know who represents them in Parliament — their background, education,
-            electoral performance, and past contributions. This project aggregates and
-            presents that information in one place, structured and searchable.
+            Following the 2026 Nepal General Election, we believe every citizen
+            has the right to know who represents them in Parliament — their
+            background, education, electoral performance, and past
+            contributions. This project aggregates and presents that information
+            in one place, structured and searchable.
           </p>
           <p className="mt-3">
-            Our mission is to reduce the information gap between elected officials and the
-            citizens they serve.
+            Our mission is to reduce the information gap between elected
+            officials and the citizens they serve.
           </p>
         </AboutSection>
 
-        <AboutSection icon={<Database className="h-5 w-5" />} title="Data Methodology">
+        <AboutSection
+          icon={<Database className="h-5 w-5" />}
+          title="Data Methodology"
+        >
           <p>
-            All data is manually researched, cross-referenced from multiple sources, and
-            verified before publication. Our process:
+            All data is manually researched, cross-referenced from multiple
+            sources, and verified before publication. Our process:
           </p>
           <ol className="mt-3 space-y-2 list-decimal list-inside text-muted-foreground">
             <li>
-              <span className="font-medium text-foreground">Primary research</span> — Data
-              is first sourced from the Election Commission of Nepal and Parliament
-              publications.
+              <span className="font-medium text-foreground">
+                Primary research
+              </span>{" "}
+              — Data is first sourced from the Election Commission of Nepal and
+              Parliament publications.
             </li>
             <li>
-              <span className="font-medium text-foreground">Cross-referencing</span> — Each
-              data point is verified against at least two independent sources where possible.
+              <span className="font-medium text-foreground">
+                Cross-referencing
+              </span>{" "}
+              — Each data point is verified against at least two independent
+              sources where possible.
             </li>
             <li>
-              <span className="font-medium text-foreground">Community review</span> — We
-              welcome corrections and additions from the public through our GitHub
-              repository.
+              <span className="font-medium text-foreground">
+                Community review
+              </span>{" "}
+              — We welcome corrections and additions from the public through our
+              GitHub repository.
             </li>
             <li>
-              <span className="font-medium text-foreground">Dated entries</span> — Every
-              candidate profile records when data was last verified.
+              <span className="font-medium text-foreground">Dated entries</span>{" "}
+              — Every MP profile records when data was last verified.
             </li>
           </ol>
         </AboutSection>
 
-        <AboutSection icon={<ExternalLink className="h-5 w-5" />} title="Primary Sources">
+        <AboutSection
+          icon={<ExternalLink className="h-5 w-5" />}
+          title="Primary Sources"
+        >
           <p className="mb-3 text-muted-foreground">
             We rely on the following primary sources for all data:
           </p>
@@ -101,7 +119,7 @@ export default function AboutPage() {
               {
                 name: "Election Commission of Nepal",
                 url: "https://www.election.gov.np",
-                note: "Official election results and candidate declarations",
+                note: "Official election results and MP declarations",
               },
               {
                 name: "Parliament of Nepal",
@@ -170,41 +188,49 @@ export default function AboutPage() {
             </p>
           </div>
           <p className="mt-3 text-muted-foreground text-sm">
-            Candidate profiles are updated on a rolling basis as official data becomes
-            available. Check the &ldquo;Last verified&rdquo; date on each candidate page for
-            the most recent update timestamp for that profile.
+            MP profiles are updated on a rolling basis as official data
+            becomes available. Check the &ldquo;Last verified&rdquo; date on
+            each MP page for the most recent update timestamp for that
+            profile.
           </p>
         </AboutSection>
 
-        <AboutSection icon={<Mail className="h-5 w-5" />} title="Found an Error?">
+        <AboutSection
+          icon={<Mail className="h-5 w-5" />}
+          title="Found an Error?"
+        >
           <p className="text-muted-foreground">
-            We are committed to accuracy. If you notice incorrect or outdated information,
-            please help us improve:
+            We are committed to accuracy. If you notice incorrect or outdated
+            information, please help us improve:
           </p>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <span className="font-medium text-foreground">Open a GitHub issue</span>{" "}
+              <span className="font-medium text-foreground">
+                Open a GitHub issue
+              </span>{" "}
               —{" "}
               <a
-                href="https://github.com/xafold/know-rsp-candidate/issues"
+                href="https://github.com/xafold/know-rsp-mp/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                github.com/xafold/know-rsp-candidate
+                github.com/xafold/know-rsp-mp
               </a>
             </li>
             <li>
-              <span className="font-medium text-foreground">Submit a pull request</span>{" "}
-              — Edit the{" "}
+              <span className="font-medium text-foreground">
+                Submit a pull request
+              </span>{" "}
+              — Edit the relevant province file in{" "}
               <code className="rounded bg-muted px-1 py-0.5 text-xs">
-                data/candidates.json
+                data/candidates/
               </code>{" "}
-              file and open a PR with your correction.
+              and open a PR with your correction.
             </li>
             <li>
-              <span className="font-medium text-foreground">Contact us</span> — Reach out
-              via the contact details in the GitHub repository.
+              <span className="font-medium text-foreground">Contact us</span> —
+              Reach out via the contact details in the GitHub repository.
             </li>
           </ul>
         </AboutSection>
@@ -228,7 +254,9 @@ export default function AboutPage() {
                 key={tech.name}
                 className="rounded-[1.2rem] border border-border/80 bg-[var(--surface-soft)] p-3"
               >
-                <p className="text-sm font-medium text-foreground">{tech.name}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {tech.name}
+                </p>
                 <p className="text-xs text-muted-foreground">{tech.desc}</p>
               </div>
             ))}
@@ -239,7 +267,10 @@ export default function AboutPage() {
           <Shield className="h-5 w-5 text-muted-foreground shrink-0" />
           <p className="text-sm text-muted-foreground">
             A citizen-led transparency initiative. Not affiliated with RSP.{" "}
-            <Link href="/" className="font-medium text-foreground hover:underline">
+            <Link
+              href="/"
+              className="font-medium text-foreground hover:underline"
+            >
               Back to directory &rarr;
             </Link>
           </p>

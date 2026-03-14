@@ -153,7 +153,7 @@ export default function HomePage() {
                 <SnapshotRow
                   label="Education records"
                   value={`${withEducation}/${totalMPs}`}
-                  helper="Structured education details linked to candidate profiles."
+                  helper="Structured education details linked to MP profiles."
                 />
                 <SnapshotRow
                   label="Official social links"
@@ -163,7 +163,7 @@ export default function HomePage() {
                 <SnapshotRow
                   label="Vote-share coverage"
                   value={`${withVoteData}/${totalMPs}`}
-                  helper="Candidate pages and analytics now include vote performance."
+                  helper="MP pages and analytics now include vote performance."
                 />
               </div>
             </div>

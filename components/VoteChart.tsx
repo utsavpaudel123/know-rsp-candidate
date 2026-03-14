@@ -84,7 +84,7 @@ export default function VoteChart({ candidate }: VoteChartProps) {
   if (!votesReceived || !runnerUp) {
     return (
       <div className="surface-panel px-4 py-6 text-center text-sm text-muted-foreground">
-        Vote data is not available for this candidate.
+        Vote data is not available for this MP.
       </div>
     );
   }

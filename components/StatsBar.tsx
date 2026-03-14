@@ -32,7 +32,7 @@ export default function StatsBar({ candidates }: StatsBarProps) {
   if (total === 0) {
     return (
       <div className="surface-panel px-5 py-4 text-sm text-muted-foreground">
-        No candidates to show statistics for.
+        No MPs to show statistics for.
       </div>
     );
   }
@@ -41,7 +41,7 @@ export default function StatsBar({ candidates }: StatsBarProps) {
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <StatTile
         icon={<Users className="h-4 w-4" />}
-        label="Candidates in view"
+        label="MPs in view"
         value={String(total)}
         helper="Current filtered result set"
       />

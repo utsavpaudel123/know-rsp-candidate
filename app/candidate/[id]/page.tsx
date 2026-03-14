@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const candidate = getCandidateById(id);
   if (!candidate) {
-    return { title: "Candidate Not Found" };
+    return { title: "MP Not Found" };
   }
 
   const title = `${candidate.name} \u2013 RSP MP, ${candidate.constituency.name}`;
@@ -143,7 +143,7 @@ export default async function CandidateProfilePage({ params }: Props) {
       "@type": "Organization",
       name: "Rastriya Swatantra Party (RSP)",
     },
-    url: `https://knowrspcandidate.vercel.app/candidate/${candidate.id}`,
+    url: `https://knowrspmp.vercel.app/candidate/${candidate.id}`,
     image: candidate.photo,
     description: candidate.biography,
     sameAs: candidate.socials?.map((social) => social.url) ?? [],

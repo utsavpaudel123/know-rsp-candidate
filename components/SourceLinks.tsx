@@ -86,7 +86,7 @@ export default function SourceLinks({ sources }: SourceLinksProps) {
             No sources available
           </p>
           <p className="text-xs text-amber-600/80 dark:text-amber-400/70 mt-0.5">
-            This candidate&apos;s information has not been verified with external
+            This MP&apos;s information has not been verified with external
             sources. Information may be incomplete or unverified.
           </p>
         </div>
