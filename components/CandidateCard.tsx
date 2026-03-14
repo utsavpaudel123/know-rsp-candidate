@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import {
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Candidate } from "@/lib/types";
+import CompareToggleButton from "@/components/CompareToggleButton";
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -57,7 +60,7 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
 
   return (
     <Link href={`/candidate/${id}`} className="group block h-full">
-      <Card className="h-full cursor-pointer border-border/80 transition-transform duration-200 hover:-translate-y-1">
+      <Card className="h-full cursor-pointer border-border/80 transition-all duration-200 hover:-translate-y-1 hover:border-[var(--rsp-blue)]/30 hover:shadow-[0_20px_48px_rgba(12,15,22,0.12)]">
         <CardHeader className="pb-0">
           <div className="flex items-start gap-4">
             <div className="shrink-0">
@@ -183,7 +186,10 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
 
           <div className="mt-auto flex items-center justify-between border-t border-border/70 pt-4 text-sm">
             <span className="font-medium text-foreground">Open full profile</span>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <div className="flex items-center gap-2">
+              <CompareToggleButton candidateId={id} variant="compact" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
           </div>
         </CardContent>
       </Card>
