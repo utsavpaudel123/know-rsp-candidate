@@ -19,6 +19,7 @@ import ContributionCard from "@/components/ContributionCard";
 import VoteChart from "@/components/VoteChart";
 import SourceLinks from "@/components/SourceLinks";
 import SocialLinks from "@/components/SocialLinks";
+import CompareToggleButton from "@/components/CompareToggleButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -168,261 +169,155 @@ export default async function CandidateProfilePage({ params }: Props) {
                     <p className="font-medium text-foreground">
                       {candidate.constituency.name}
                     </p>
-                    <p>
-                      {candidate.constituency.district}, {candidate.constituency.province}
+                    <p className="text-sm">
+                      {candidate.constituency.district},{" "}
+                      {candidate.constituency.province}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-6 flex flex-wrap gap-3">
                   <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${provinceTone}`}
-                  >
-                    {candidate.constituency.province}
-                  </span>
-                  <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${
                       candidate.electionType === "FPTP"
                         ? "bg-[var(--rsp-blue)] text-white"
                         : "bg-[var(--rsp-green)] text-white"
                     }`}
                   >
-                    {candidate.electionType === "FPTP"
-                      ? "First Past the Post"
-                      : "Proportional Representation"}
+                    {candidate.electionType}
                   </span>
-                  <span className="inline-flex items-center rounded-full border border-border/80 bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-foreground">
-                    {candidate.gender}
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${provinceTone}`}
+                  >
+                    {candidate.constituency.province}
                   </span>
+                  {candidate.gender && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                      <UserRound className="h-3 w-3" />
+                      {candidate.gender}
+                    </span>
+                  )}
                 </div>
 
-                <p className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground">
-                  {candidate.biography ??
-                    "Biography is still being compiled from public records and verified sources."}
-                </p>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <FactCard
-                    icon={<UserRound className="h-4 w-4" />}
-                    label="Profession"
-                    value={candidate.profession ?? "Not yet listed"}
-                  />
-                  <FactCard
-                    icon={<MapPin className="h-4 w-4" />}
-                    label="Constituency"
-                    value={candidate.constituency.name}
-                  />
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <CompareToggleButton candidateId={candidate.id} />
                 </div>
               </div>
             </div>
+
+            {candidate.biography && (
+              <div className="mt-8 border-t border-border/70 pt-8">
+                <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Biography
+                </h2>
+                <p className="leading-7 text-foreground/90">{candidate.biography}</p>
+              </div>
+            )}
           </div>
 
-          <div className="grid gap-4">
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-              <QuickStat
-                icon={<Calendar className="h-4 w-4" />}
-                label="Age"
-                value={candidate.age !== undefined ? `${candidate.age} years` : "N/A"}
-              />
-              <QuickStat
-                icon={<BookOpen className="h-4 w-4" />}
-                label="Top education"
-                value={topEducation}
-              />
-              <QuickStat
-                icon={<Trophy className="h-4 w-4" />}
-                label="Vote share"
-                value={
-                  candidate.voteSharePercent !== undefined
-                    ? `${candidate.voteSharePercent.toFixed(1)}%`
-                    : "N/A"
-                }
-              />
-              <QuickStat
-                icon={<Trophy className="h-4 w-4" />}
-                label="Win margin"
-                value={
-                  candidate.winMargin !== undefined
-                    ? candidate.winMargin.toLocaleString()
-                    : "N/A"
-                }
-              />
-            </div>
+          <div className="flex flex-col gap-6">
+            <StatsCard candidate={candidate} />
 
-            <div className="surface-panel p-5">
-              <p className="section-kicker">Verification status</p>
-              <p className="mt-3 text-base font-semibold text-foreground">
-                Data last verified on {lastVerified}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Profile details are reviewed against public sources and updated as more
-                records become available.
-              </p>
-            </div>
+            {candidate.education && candidate.education.length > 0 && (
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<BookOpen className="h-4 w-4" />}>
+                  Education
+                </SectionHeader>
+                <EducationTimeline education={candidate.education} />
+              </div>
+            )}
 
             {candidate.socials && candidate.socials.length > 0 && (
-              <SectionCard
-                title="Official links"
-                description="Only official or clearly attributable candidate pages are shown."
-              >
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<ExternalLink className="h-4 w-4" />}>
+                  Official Links
+                </SectionHeader>
                 <SocialLinks socials={candidate.socials} />
-              </SectionCard>
+              </div>
+            )}
+
+            {candidate.sources && candidate.sources.length > 0 && (
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<ExternalLink className="h-4 w-4" />}>
+                  Sources
+                </SectionHeader>
+                <SourceLinks sources={candidate.sources} />
+              </div>
             )}
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
-          <div className="space-y-6">
-            <SectionCard
-              title="Biography"
-              description="Context on the representative's background, public work, and profile."
-            >
-              <div className="space-y-4">
-                <p className="leading-7 text-muted-foreground">
-                  {candidate.biography ?? "Biography not yet available."}
-                </p>
-                {candidate.profession && (
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    <span className="font-semibold text-foreground">Profession:</span>{" "}
-                    {candidate.profession}
-                  </p>
-                )}
-              </div>
-            </SectionCard>
-
-            {candidate.education && candidate.education.length > 0 && (
-              <SectionCard
-                title="Education"
-                description="Structured education history extracted from public sources."
-              >
-                <EducationTimeline education={candidate.education} />
-              </SectionCard>
-            )}
-
-            {candidate.majorContributions && candidate.majorContributions.length > 0 && (
-              <SectionCard
-                title="Major contributions"
-                description="Public service areas, initiatives, and notable contributions."
-              >
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {candidate.majorContributions.map((contribution, index) => (
-                    <ContributionCard key={index} contribution={contribution} />
-                  ))}
-                </div>
-              </SectionCard>
-            )}
-
-            {candidate.previousPositions && candidate.previousPositions.length > 0 && (
-              <SectionCard
-                title="Previous positions"
-                description="Roles and responsibilities held before the current term."
-              >
-                <ul className="space-y-3">
-                  {candidate.previousPositions.map((position, index) => (
-                    <li
-                      key={index}
-                      className="flex items-start gap-3 rounded-[1.2rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-4 text-sm leading-6 text-muted-foreground"
-                    >
-                      <span
-                        className="mt-2 h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: "var(--rsp-blue)" }}
-                      />
-                      <span>{position}</span>
-                    </li>
-                  ))}
-                </ul>
-              </SectionCard>
-            )}
-          </div>
-
-          <div className="space-y-6">
-            {candidate.electionType === "FPTP" && candidate.votesReceived !== undefined && (
-              <SectionCard
-                title="Electoral performance"
-                description="Winner-versus-runner-up comparison using constituency vote data."
-              >
-                <VoteChart candidate={candidate} />
-              </SectionCard>
-            )}
-
-            {candidate.sources && candidate.sources.length > 0 && (
-              <SectionCard
-                title="Sources & references"
-                description="Primary citations used to verify this candidate profile."
-              >
-                <SourceLinks sources={candidate.sources} />
-              </SectionCard>
-            )}
-
-            <div className="surface-panel p-5">
-              <div className="flex items-start gap-3">
-                <div className="rounded-full border border-border/80 bg-[var(--surface-soft)] p-2 text-[var(--rsp-blue)]">
-                  <ExternalLink className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="section-kicker">Profile data</p>
-                  <p className="mt-2 text-base font-semibold text-foreground">
-                    This profile combines civic context, candidate background, and
-                    election data.
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    When information is missing, the page stays intentionally sparse
-                    rather than inferring details without a reliable source trail.
-                  </p>
-                </div>
+        {candidate.majorContributions && candidate.majorContributions.length > 0 && (
+          <section className="mt-6">
+            <div className="surface-card overflow-hidden p-6 sm:p-8">
+              <SectionHeader icon={<Trophy className="h-4 w-4" />}>
+                Notable Contributions
+              </SectionHeader>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {candidate.majorContributions.map((contribution, idx) => (
+                  <ContributionCard key={idx} contribution={contribution} />
+                ))}
               </div>
             </div>
-          </div>
+          </section>
+        )}
+
+        <div className="mt-6 text-center text-xs text-muted-foreground">
+          Last verified: {lastVerified}
         </div>
       </div>
     </>
   );
 }
 
-function SectionCard({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description: string;
-  children: ReactNode;
-}) {
+function StatsCard({ candidate }: { candidate: Candidate }) {
   return (
-    <section className="surface-card p-6 sm:p-7">
-      <div className="mb-5">
-        <p className="section-kicker">{title}</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-foreground">
-          {title}
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-      </div>
-      {children}
-    </section>
-  );
-}
+    <div className="surface-card overflow-hidden p-6">
+      <SectionHeader icon={<Trophy className="h-4 w-4" />}>
+        Election Performance
+      </SectionHeader>
 
-function QuickStat({
-  icon,
-  label,
-  value,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="surface-panel flex min-h-28 flex-col justify-between px-4 py-4">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        {icon}
-        <span>{label}</span>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {candidate.age != null && (
+          <StatTile
+            icon={<Calendar className="h-3.5 w-3.5" />}
+            label="Age"
+            value={`${candidate.age} yrs`}
+          />
+        )}
+        {candidate.voteSharePercent != null && (
+          <StatTile
+            icon={<Trophy className="h-3.5 w-3.5" />}
+            label="Vote Share"
+            value={`${candidate.voteSharePercent.toFixed(1)}%`}
+          />
+        )}
+        {candidate.totalValidVotes != null && (
+          <StatTile
+            icon={<Trophy className="h-3.5 w-3.5" />}
+            label="Total Votes"
+            value={candidate.totalValidVotes.toLocaleString()}
+          />
+        )}
+        {candidate.winMargin != null && (
+          <StatTile
+            icon={<Trophy className="h-3.5 w-3.5" />}
+            label="Win Margin"
+            value={candidate.winMargin.toLocaleString()}
+          />
+        )}
       </div>
-      <p className="numeric mt-4 text-2xl font-semibold text-foreground">{value}</p>
+
+      {candidate.voteSharePercent != null && (
+        <div className="mt-4">
+          <VoteChart candidate={candidate} />
+        </div>
+      )}
     </div>
   );
 }
 
-function FactCard({
+function StatTile({
   icon,
   label,
   value,
@@ -432,12 +327,27 @@ function FactCard({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-4">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+    <div className="rounded-[1.2rem] border border-border/70 bg-[var(--surface-soft)] px-3 py-3">
+      <div className="flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
         {icon}
         <span>{label}</span>
       </div>
-      <p className="mt-3 text-sm font-semibold leading-6 text-foreground">{value}</p>
+      <p className="numeric mt-2 text-base font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function SectionHeader({
+  icon,
+  children,
+}: {
+  icon: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      {icon}
+      <span>{children}</span>
     </div>
   );
 }
