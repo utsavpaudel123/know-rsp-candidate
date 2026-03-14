@@ -106,7 +106,7 @@ const METRIC_ROWS: {
     label: "Total Votes",
     icon: <Trophy className="h-3.5 w-3.5" />,
     render: (c) =>
-      c.totalVotes != null ? c.totalVotes.toLocaleString() : null,
+      c.totalValidVotes != null ? c.totalValidVotes.toLocaleString() : null,
   },
   {
     key: "winMargin",
@@ -251,7 +251,7 @@ export default function ComparePage() {
                     className="flex items-center justify-center p-4 text-center text-sm font-medium text-foreground"
                   >
                     {value ?? (
-                      <span className="text-muted-foreground/40">—</span>
+                      <span className="text-muted-foreground/40">&mdash;</span>
                     )}
                   </div>
                 );
