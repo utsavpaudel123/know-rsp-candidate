@@ -4,6 +4,9 @@ import Link from "next/link";
 import { Outfit, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/Navbar";
+import ScrollToTop from "@/components/ScrollToTop";
+import CompareBar from "@/components/CompareBar";
+import { CompareProvider } from "@/lib/compare-context";
 import "./globals.css";
 
 const SITE_URL = "https://knowrspcandidate.vercel.app";
@@ -77,6 +80,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <CompareProvider>
           <div className="relative flex min-h-screen flex-col">
             <div
               aria-hidden="true"
@@ -84,6 +88,7 @@ export default function RootLayout({
             />
             <Navbar />
             <main className="flex-1 pb-14">{children}</main>
+            <ScrollToTop />
             <footer className="page-shell-wide pb-8">
               <div className="surface-panel overflow-hidden px-6 py-6 sm:px-8">
                 <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:items-end">
@@ -129,6 +134,8 @@ export default function RootLayout({
               </div>
             </footer>
           </div>
+          <CompareBar />
+          </CompareProvider>
         </ThemeProvider>
       </body>
     </html>
