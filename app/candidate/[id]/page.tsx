@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Candidate Not Found" };
   }
 
-  const title = `${candidate.name} – RSP MP, ${candidate.constituency.name}`;
+  const title = `${candidate.name} \u2013 RSP MP, ${candidate.constituency.name}`;
   return {
     title,
     description: `Profile of ${candidate.name}, RSP Member of Parliament from ${candidate.constituency.name}, ${candidate.constituency.province}. Elected in the 2026 Nepal General Election.`,
@@ -247,14 +247,14 @@ export default async function CandidateProfilePage({ params }: Props) {
           </div>
         </section>
 
-        {candidate.contributions && candidate.contributions.length > 0 && (
+        {candidate.majorContributions && candidate.majorContributions.length > 0 && (
           <section className="mt-6">
             <div className="surface-card overflow-hidden p-6 sm:p-8">
               <SectionHeader icon={<Trophy className="h-4 w-4" />}>
                 Notable Contributions
               </SectionHeader>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {candidate.contributions.map((contribution, idx) => (
+                {candidate.majorContributions.map((contribution, idx) => (
                   <ContributionCard key={idx} contribution={contribution} />
                 ))}
               </div>
@@ -292,11 +292,11 @@ function StatsCard({ candidate }: { candidate: Candidate }) {
             value={`${candidate.voteSharePercent.toFixed(1)}%`}
           />
         )}
-        {candidate.totalVotes != null && (
+        {candidate.totalValidVotes != null && (
           <StatTile
             icon={<Trophy className="h-3.5 w-3.5" />}
             label="Total Votes"
-            value={candidate.totalVotes.toLocaleString()}
+            value={candidate.totalValidVotes.toLocaleString()}
           />
         )}
         {candidate.winMargin != null && (
@@ -310,7 +310,7 @@ function StatsCard({ candidate }: { candidate: Candidate }) {
 
       {candidate.voteSharePercent != null && (
         <div className="mt-4">
-          <VoteChart voteSharePercent={candidate.voteSharePercent} />
+          <VoteChart candidate={candidate} />
         </div>
       )}
     </div>
