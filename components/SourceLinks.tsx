@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { ReactNode } from "react";
 import {
   ExternalLink,
@@ -10,12 +13,15 @@ import {
   Building2,
   Newspaper,
   Link2,
+  ChevronDown,
 } from "lucide-react";
 import { Source, SourcePlatform } from "@/lib/types";
 
 interface SourceLinksProps {
   sources: Source[];
 }
+
+const MAX_VISIBLE = 4;
 
 const PLATFORM_CONFIG: Record<
   SourcePlatform,
@@ -69,6 +75,8 @@ const PLATFORM_CONFIG: Record<
 };
 
 export default function SourceLinks({ sources }: SourceLinksProps) {
+  const [expanded, setExpanded] = useState(false);
+
   if (!sources || sources.length === 0) {
     return (
       <div className="flex items-start gap-3 rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-4 dark:border-amber-900/50 dark:bg-amber-900/20">
@@ -86,6 +94,10 @@ export default function SourceLinks({ sources }: SourceLinksProps) {
     );
   }
 
+  const needsCollapse = sources.length > MAX_VISIBLE;
+  const visibleSources = needsCollapse && !expanded ? sources.slice(0, MAX_VISIBLE) : sources;
+  const hiddenCount = sources.length - MAX_VISIBLE;
+
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
@@ -94,7 +106,7 @@ export default function SourceLinks({ sources }: SourceLinksProps) {
       </p>
 
       <div className="flex flex-col gap-2">
-        {sources.map((source, idx) => {
+        {visibleSources.map((source, idx) => {
           const config = PLATFORM_CONFIG[source.platform];
           return (
             <a
@@ -102,12 +114,12 @@ export default function SourceLinks({ sources }: SourceLinksProps) {
               href={source.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-4 transition-all hover:bg-muted/70"
+              className="group flex items-center gap-3 rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-3 transition-all hover:bg-muted/70"
             >
               <span className={`shrink-0 ${config.color}`}>{config.icon}</span>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground leading-none">
+                <p className="text-sm font-semibold text-foreground leading-none truncate">
                   {source.label ?? config.label}
                 </p>
                 <p className={`mt-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] ${config.color}`}>
@@ -120,6 +132,16 @@ export default function SourceLinks({ sources }: SourceLinksProps) {
           );
         })}
       </div>
+
+      {needsCollapse && !expanded && (
+        <button
+          onClick={() => setExpanded(true)}
+          className="flex items-center justify-center gap-2 rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+        >
+          <ChevronDown className="h-3.5 w-3.5" />
+          Show {hiddenCount} more source{hiddenCount !== 1 ? "s" : ""}
+        </button>
+      )}
     </div>
   );
 }

@@ -8,9 +8,13 @@ import {
   Calendar,
   ChevronRight,
   ExternalLink,
+  FileText,
   MapPin,
+  Phone,
   Trophy,
   UserRound,
+  Briefcase,
+  Download,
 } from "lucide-react";
 import { getCandidates, getCandidateById } from "@/lib/getCandidates";
 import type { Candidate } from "@/lib/types";
@@ -78,6 +82,19 @@ function getProvinceTone(province: string): string {
   return tones[province] ?? "bg-slate-100 text-slate-800 dark:bg-slate-500/15 dark:text-slate-200";
 }
 
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
 export default async function CandidateProfilePage({ params }: Props) {
   const { id } = await params;
   const candidate = getCandidateById(id);
@@ -93,6 +110,9 @@ export default async function CandidateProfilePage({ params }: Props) {
     month: "long",
     day: "numeric",
   });
+
+  const hasQuickFacts =
+    candidate.dateOfBirth || candidate.age || candidate.profession || candidate.phone;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -134,88 +154,189 @@ export default async function CandidateProfilePage({ params }: Props) {
           </ol>
         </nav>
 
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-          <div className="surface-card overflow-hidden p-6 sm:p-8 lg:p-10">
-            <p className="section-kicker">Candidate profile</p>
-            <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-              <div className="shrink-0">
-                {candidate.photo ? (
-                  <div className="relative h-44 w-44 overflow-hidden rounded-[2rem] border border-border/80 bg-muted/30 shadow-sm sm:h-52 sm:w-52">
-                    <Image
-                      src={candidate.photo}
-                      alt={candidate.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="surface-contrast flex h-44 w-44 items-center justify-center rounded-[2rem] text-6xl font-semibold sm:h-52 sm:w-52">
-                    {candidate.name.charAt(0)}
-                  </div>
-                )}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <h1 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
-                  {candidate.name}
-                </h1>
-                {candidate.nameNepali && (
-                  <p className="mt-2 text-lg text-muted-foreground">{candidate.nameNepali}</p>
-                )}
-
-                <div className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {candidate.constituency.name}
-                    </p>
-                    <p className="text-sm">
-                      {candidate.constituency.district},{" "}
-                      {candidate.constituency.province}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${
-                      candidate.electionType === "FPTP"
-                        ? "bg-[var(--rsp-blue)] text-white"
-                        : "bg-[var(--rsp-green)] text-white"
-                    }`}
-                  >
-                    {candidate.electionType}
-                  </span>
-                  <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${provinceTone}`}
-                  >
-                    {candidate.constituency.province}
-                  </span>
-                  {candidate.gender && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                      <UserRound className="h-3 w-3" />
-                      {candidate.gender}
-                    </span>
+        {/* ── Main 2-col grid — items-start prevents left col from stretching ── */}
+        <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+          {/* ── LEFT COLUMN: stacked cards ── */}
+          <div className="flex flex-col gap-5">
+            {/* Profile + Bio card */}
+            <div className="surface-card overflow-hidden p-6 sm:p-8">
+              <p className="section-kicker">Candidate profile</p>
+              <div className="mt-5 flex flex-col gap-5 lg:flex-row">
+                <div className="shrink-0">
+                  {candidate.photo ? (
+                    <div className="relative h-40 w-40 overflow-hidden rounded-[2rem] border border-border/80 bg-muted/30 shadow-sm sm:h-48 sm:w-48">
+                      <Image
+                        src={candidate.photo}
+                        alt={candidate.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="surface-contrast flex h-40 w-40 items-center justify-center rounded-[2rem] text-6xl font-semibold sm:h-48 sm:w-48">
+                      {candidate.name.charAt(0)}
+                    </div>
                   )}
                 </div>
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <CompareToggleButton candidateId={candidate.id} />
+                <div className="min-w-0 flex-1">
+                  <h1 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
+                    {candidate.name}
+                  </h1>
+                  {candidate.nameNepali && (
+                    <p className="mt-1.5 text-lg text-muted-foreground">{candidate.nameNepali}</p>
+                  )}
+
+                  <div className="mt-3 flex items-start gap-2 text-sm text-muted-foreground">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {candidate.constituency.name}
+                      </p>
+                      <p className="text-sm">
+                        {candidate.constituency.district},{" "}
+                        {candidate.constituency.province}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${
+                        candidate.electionType === "FPTP"
+                          ? "bg-[var(--rsp-blue)] text-white"
+                          : "bg-[var(--rsp-green)] text-white"
+                      }`}
+                    >
+                      {candidate.electionType}
+                    </span>
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] ${provinceTone}`}
+                    >
+                      {candidate.constituency.province}
+                    </span>
+                    {candidate.gender && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        <UserRound className="h-3 w-3" />
+                        {candidate.gender}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <CompareToggleButton candidateId={candidate.id} />
+                  </div>
                 </div>
               </div>
+
+              {candidate.biography && (
+                <div className="mt-6 border-t border-border/70 pt-6">
+                  <h2 className="mb-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    Biography
+                  </h2>
+                  <p className="leading-7 text-foreground/90">{candidate.biography}</p>
+                </div>
+              )}
             </div>
 
-            {candidate.biography && (
-              <div className="mt-8 border-t border-border/70 pt-8">
-                <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  Biography
-                </h2>
-                <p className="leading-7 text-foreground/90">{candidate.biography}</p>
+            {/* Quick Facts card — only if there's data */}
+            {hasQuickFacts && (
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<UserRound className="h-4 w-4" />}>
+                  Quick Facts
+                </SectionHeader>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {candidate.dateOfBirth && (
+                    <QuickFactRow
+                      icon={<Calendar className="h-3.5 w-3.5" />}
+                      label="Date of Birth"
+                      value={formatDate(candidate.dateOfBirth)}
+                    />
+                  )}
+                  {candidate.age != null && (
+                    <QuickFactRow
+                      icon={<UserRound className="h-3.5 w-3.5" />}
+                      label="Age"
+                      value={`${candidate.age} years`}
+                    />
+                  )}
+                  {candidate.profession && (
+                    <QuickFactRow
+                      icon={<Briefcase className="h-3.5 w-3.5" />}
+                      label="Profession"
+                      value={candidate.profession}
+                    />
+                  )}
+                  {candidate.phone && (
+                    <QuickFactRow
+                      icon={<Phone className="h-3.5 w-3.5" />}
+                      label="Phone"
+                      value={candidate.phone}
+                      href={`tel:${candidate.phone}`}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Manifesto card */}
+            {candidate.manifesto && (
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<FileText className="h-4 w-4" />}>
+                  Party Manifesto
+                </SectionHeader>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">
+                      {candidate.manifesto.title}
+                    </p>
+                    {candidate.manifesto.note && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {candidate.manifesto.note}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <a
+                      href={candidate.manifesto.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-[var(--surface-soft)] px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted/70"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      View
+                    </a>
+                    {candidate.manifesto.downloadUrl && (
+                      <a
+                        href={candidate.manifesto.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-[var(--rsp-blue)] px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Download PDF
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Social Links — moved to left column for balance */}
+            {candidate.socials && candidate.socials.length > 0 && (
+              <div className="surface-card overflow-hidden p-6">
+                <SectionHeader icon={<ExternalLink className="h-4 w-4" />}>
+                  Official Links
+                </SectionHeader>
+                <div className="mt-3">
+                  <SocialLinks socials={candidate.socials} />
+                </div>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col gap-6">
+          {/* ── RIGHT COLUMN: stacked cards ── */}
+          <div className="flex flex-col gap-5">
             <StatsCard candidate={candidate} />
 
             {candidate.education && candidate.education.length > 0 && (
@@ -224,15 +345,6 @@ export default async function CandidateProfilePage({ params }: Props) {
                   Education
                 </SectionHeader>
                 <EducationTimeline education={candidate.education} />
-              </div>
-            )}
-
-            {candidate.socials && candidate.socials.length > 0 && (
-              <div className="surface-card overflow-hidden p-6">
-                <SectionHeader icon={<ExternalLink className="h-4 w-4" />}>
-                  Official Links
-                </SectionHeader>
-                <SocialLinks socials={candidate.socials} />
               </div>
             )}
 
@@ -247,8 +359,9 @@ export default async function CandidateProfilePage({ params }: Props) {
           </div>
         </section>
 
+        {/* ── FULL-WIDTH: Notable Contributions ── */}
         {candidate.majorContributions && candidate.majorContributions.length > 0 && (
-          <section className="mt-6">
+          <section className="mt-5">
             <div className="surface-card overflow-hidden p-6 sm:p-8">
               <SectionHeader icon={<Trophy className="h-4 w-4" />}>
                 Notable Contributions
@@ -262,7 +375,7 @@ export default async function CandidateProfilePage({ params }: Props) {
           </section>
         )}
 
-        <div className="mt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-5 text-center text-xs text-muted-foreground">
           Last verified: {lastVerified}
         </div>
       </div>
@@ -278,13 +391,6 @@ function StatsCard({ candidate }: { candidate: Candidate }) {
       </SectionHeader>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        {candidate.age != null && (
-          <StatTile
-            icon={<Calendar className="h-3.5 w-3.5" />}
-            label="Age"
-            value={`${candidate.age} yrs`}
-          />
-        )}
         {candidate.voteSharePercent != null && (
           <StatTile
             icon={<Trophy className="h-3.5 w-3.5" />}
@@ -292,10 +398,17 @@ function StatsCard({ candidate }: { candidate: Candidate }) {
             value={`${candidate.voteSharePercent.toFixed(1)}%`}
           />
         )}
+        {candidate.votesReceived != null && (
+          <StatTile
+            icon={<Trophy className="h-3.5 w-3.5" />}
+            label="Votes Received"
+            value={candidate.votesReceived.toLocaleString()}
+          />
+        )}
         {candidate.totalValidVotes != null && (
           <StatTile
             icon={<Trophy className="h-3.5 w-3.5" />}
-            label="Total Votes"
+            label="Total Valid Votes"
             value={candidate.totalValidVotes.toLocaleString()}
           />
         )}
@@ -333,6 +446,39 @@ function StatTile({
         <span>{label}</span>
       </div>
       <p className="numeric mt-2 text-base font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function QuickFactRow({
+  icon,
+  label,
+  value,
+  href,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-[var(--surface-soft)] px-3.5 py-2.5">
+      <span className="shrink-0 text-muted-foreground">{icon}</span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          {label}
+        </p>
+        {href ? (
+          <a
+            href={href}
+            className="text-sm font-medium text-foreground hover:text-[var(--rsp-blue)] dark:hover:text-blue-300 transition-colors"
+          >
+            {value}
+          </a>
+        ) : (
+          <p className="text-sm font-medium text-foreground truncate">{value}</p>
+        )}
+      </div>
     </div>
   );
 }
