@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavLink {
   href: string;
@@ -16,6 +18,7 @@ interface MobileNavProps {
 
 export default function MobileNav({ links }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -38,7 +41,7 @@ export default function MobileNav({ links }: MobileNavProps) {
             onClick={() => setOpen(false)}
           />
 
-          <div className="page-shell absolute inset-x-0 top-4">
+          <div className="page-shell absolute inset-x-0 top-4 fade-in">
             <div className="surface-panel overflow-hidden">
               <div className="flex items-center justify-between border-b border-border/80 px-5 py-4">
                 <div>
@@ -60,16 +63,31 @@ export default function MobileNav({ links }: MobileNavProps) {
               </div>
 
               <nav className="flex flex-col gap-2 p-4">
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="rounded-2xl border border-border/80 bg-[var(--surface-soft)] px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {links.map((link) => {
+                  const isActive =
+                    link.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(link.href);
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "rounded-2xl border px-4 py-3 text-sm font-medium transition-colors",
+                        isActive
+                          ? "border-[var(--rsp-blue)]/30 bg-[var(--rsp-blue)]/5 text-foreground"
+                          : "border-border/80 bg-[var(--surface-soft)] text-foreground hover:bg-muted/70"
+                      )}
+                    >
+                      {link.label}
+                      {isActive && (
+                        <span className="ml-2 inline-flex h-1.5 w-1.5 rounded-full bg-[var(--rsp-blue)]" />
+                      )}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
           </div>

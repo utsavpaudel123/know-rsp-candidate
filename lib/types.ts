@@ -66,6 +66,14 @@ export interface SocialLink {
   label?: string;
 }
 
+export interface Manifesto {
+  type: "party" | "individual";
+  title: string;
+  url: string;
+  downloadUrl?: string;
+  note?: string;
+}
+
 export interface Candidate {
   id: string;
   name: string;
@@ -88,6 +96,8 @@ export interface Candidate {
   majorContributions: Contribution[];
   previousPositions?: string[];
   socials?: SocialLink[];
+  phone?: string;
+  manifesto?: Manifesto;
   sources: Source[];
   lastUpdated: string;
 }

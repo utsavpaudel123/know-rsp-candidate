@@ -43,7 +43,7 @@ export default function SocialLinks({ socials }: SocialLinksProps) {
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-2 sm:grid-cols-2">
       {socials.map((social, idx) => {
         const config = PLATFORM_CONFIG[social.platform];
 
@@ -53,12 +53,12 @@ export default function SocialLinks({ socials }: SocialLinksProps) {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-4 transition-all hover:bg-muted/70"
+            className="group flex items-center gap-3 rounded-[1.25rem] border border-border/80 bg-[var(--surface-soft)] px-4 py-3 transition-all hover:bg-muted/70"
           >
             <span className={`shrink-0 ${config.color}`}>{config.icon}</span>
 
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-foreground leading-none">
+              <p className="text-sm font-semibold text-foreground leading-none truncate">
                 {social.label ?? config.label}
               </p>
               <p className={`mt-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] ${config.color}`}>
