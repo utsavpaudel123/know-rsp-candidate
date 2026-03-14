@@ -5,6 +5,8 @@ import { Outfit, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/Navbar";
 import ScrollToTop from "@/components/ScrollToTop";
+import CompareBar from "@/components/CompareBar";
+import { CompareProvider } from "@/lib/compare-context";
 import "./globals.css";
 
 const SITE_URL = "https://knowrspcandidate.vercel.app";
@@ -78,6 +80,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <CompareProvider>
           <div className="relative flex min-h-screen flex-col">
             <div
               aria-hidden="true"
@@ -131,6 +134,8 @@ export default function RootLayout({
               </div>
             </footer>
           </div>
+          <CompareBar />
+          </CompareProvider>
         </ThemeProvider>
       </body>
     </html>
