@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getCandidates } from "@/lib/getCandidates";
 
-const BASE_URL = "https://knowrspmp.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://knowrspmp.vercel.app";
 
 const LEADERBOARD_SLUGS = [
   "top-votes",
