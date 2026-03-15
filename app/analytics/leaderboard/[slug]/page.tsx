@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getCandidates } from "@/lib/getCandidates";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -133,14 +134,22 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const metric = metrics[slug];
   if (!metric) return {};
 
   return {
-    title: `${metric.title} | RSP Election Analytics`,
-    description: metric.description,
+    title: `${metric.title} – Full Ranking | RSP Election Analytics`,
+    description: `Complete ranking of RSP MPs by ${metric.title.toLowerCase()}. ${metric.description} Nepal 2026 General Election data.`,
+    alternates: {
+      canonical: `/analytics/leaderboard/${slug}`,
+    },
+    openGraph: {
+      title: `${metric.title} – Full Ranking`,
+      description: metric.description,
+      url: `/analytics/leaderboard/${slug}`,
+    },
   };
 }
 

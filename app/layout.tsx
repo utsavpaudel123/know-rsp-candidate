@@ -9,7 +9,7 @@ import CompareBar from "@/components/CompareBar";
 import { CompareProvider } from "@/lib/compare-context";
 import "./globals.css";
 
-const SITE_URL = "https://knowrspcandidate.vercel.app";
+const SITE_URL = "https://knowrspmp.vercel.app";
 const DEFAULT_SHARE_IMAGE = "/rsp-share-preview.jpg";
 
 const outfit = Outfit({
@@ -27,19 +27,32 @@ const sourceSans3 = Source_Sans_3({
 
 export const metadata: Metadata = {
   title: {
-    default: "Know RSP | Election Directory",
+    default: "Know RSP | RSP Members of Parliament – Nepal 2026 Election",
     template: "%s | Know RSP",
   },
   description:
-    "A civic directory of RSP Members of Parliament from the 2026 Nepal General Election, with profiles, education, verified links, and election performance data.",
+    "A civic directory of all 125 RSP Members of Parliament from the 2026 Nepal General Election. Explore verified profiles, education, official social links, election results, and vote-share analytics.",
+  keywords: [
+    "RSP",
+    "Rastriya Swatantra Party",
+    "Nepal election 2026",
+    "RSP MPs",
+    "Nepal parliament",
+    "RSP candidates",
+    "Nepal general election",
+    "RSP election results",
+    "Nepal MP profiles",
+    "civic transparency Nepal",
+    "राष्ट्रिय स्वतन्त्र पार्टी",
+  ],
   metadataBase: new URL(SITE_URL),
   alternates: {
-    canonical: SITE_URL,
+    canonical: "/",
   },
   openGraph: {
-    title: "Know RSP | Election Directory",
+    title: "Know RSP – RSP Members of Parliament Directory",
     description:
-      "Profiles, education, social links, and election performance for RSP Members of Parliament elected in the 2026 Nepal General Election.",
+      "Browse all 125 RSP Members of Parliament elected in the 2026 Nepal General Election. Verified profiles, education, social links, and election performance data.",
     url: SITE_URL,
     siteName: "Know RSP",
     locale: "en_US",
@@ -49,20 +62,31 @@ export const metadata: Metadata = {
         url: DEFAULT_SHARE_IMAGE,
         width: 1024,
         height: 576,
-        alt: "Know RSP share preview using the official RSP visual",
+        alt: "Know RSP – Directory of RSP Members of Parliament from Nepal's 2026 General Election",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Know RSP | Election Directory",
+    title: "Know RSP – RSP Members of Parliament Directory",
     description:
-      "Profiles, education, social links, and election performance for RSP Members of Parliament elected in the 2026 Nepal General Election.",
+      "Browse all 125 RSP MPs elected in Nepal's 2026 General Election. Verified profiles, education, official links, and election analytics.",
     images: [DEFAULT_SHARE_IMAGE],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add Google Search Console verification when available
+    // google: "your-verification-code",
   },
 };
 

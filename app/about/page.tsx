@@ -13,9 +13,18 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About | Know RSP",
+  title: "About – Methodology, Sources & Disclaimer",
   description:
-    "About the Know RSP civic transparency initiative — methodology, data sources, and disclaimers.",
+    "About the Know RSP civic transparency project. Learn our data methodology, primary sources (Election Commission, Parliament of Nepal, Wikipedia), data verification process, and project disclaimer.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Know RSP – Methodology & Sources",
+    description:
+      "Learn how Know RSP verifies and presents RSP MP data. Methodology, primary sources, and project principles.",
+    url: "/about",
+  },
 };
 
 export default function AboutPage() {

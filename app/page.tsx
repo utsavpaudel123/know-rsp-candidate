@@ -16,31 +16,31 @@ import CandidateGrid from "@/components/CandidateGrid";
 const HOME_SHARE_IMAGE = "/rsp-share-preview.jpg";
 
 export const metadata: Metadata = {
-  title: "Know RSP | Nepal Civic Transparency",
+  title: "Know RSP | All 125 RSP Members of Parliament – Nepal 2026 Election",
   description:
-    "Explore all RSP Members of Parliament elected in the 2026 Nepal General Election. A citizen-led civic transparency initiative.",
+    "Browse all 125 RSP Members of Parliament elected in Nepal's 2026 General Election. Search by name, constituency, province, education, or election performance. Verified profiles with social links and vote-share data.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Know Your RSP Representative",
+    title: "Know Your RSP Representative – 125 MPs from Nepal's 2026 Election",
     description:
-      "Explore all RSP Members of Parliament elected in the 2026 Nepal General Election.",
+      "Search and explore all RSP Members of Parliament. Verified profiles, education, constituency data, and election performance analytics.",
     url: "/",
     images: [
       {
         url: HOME_SHARE_IMAGE,
         width: 1024,
         height: 576,
-        alt: "Know RSP share preview using the official RSP visual",
+        alt: "Know RSP – Complete directory of RSP Members of Parliament from Nepal's 2026 General Election",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Know Your RSP Representative",
+    title: "Know Your RSP Representative – 125 MPs from Nepal's 2026 Election",
     description:
-      "Explore all RSP Members of Parliament elected in the 2026 Nepal General Election.",
+      "Search and explore all RSP Members of Parliament. Verified profiles, education, constituency data, and election performance analytics.",
     images: [HOME_SHARE_IMAGE],
   },
 };
@@ -55,7 +55,45 @@ export default function HomePage() {
   const withSocials = candidates.filter((c) => c.socials?.length).length;
   const withVoteData = candidates.filter((c) => c.voteSharePercent != null).length;
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Know RSP",
+    alternateName: "Know Your RSP Representative",
+    url: "https://knowrspmp.vercel.app",
+    description:
+      "A civic directory of RSP Members of Parliament from Nepal's 2026 General Election.",
+    publisher: {
+      "@type": "Organization",
+      name: "Know RSP",
+      url: "https://knowrspmp.vercel.app",
+    },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "RSP Members of Parliament",
+    description: "All RSP MPs elected in Nepal's 2026 General Election",
+    numberOfItems: totalMPs,
+    itemListElement: candidates.slice(0, 30).map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://knowrspmp.vercel.app/candidate/${c.id}`,
+      name: c.name,
+    })),
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
     <div>
       <section className="page-shell-wide page-section">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
@@ -215,6 +253,7 @@ export default function HomePage() {
         <CandidateGrid initialCandidates={candidates} />
       </section>
     </div>
+    </>
   );
 }
 

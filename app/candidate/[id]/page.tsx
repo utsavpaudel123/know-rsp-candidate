@@ -41,14 +41,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "MP Not Found" };
   }
 
-  const title = `${candidate.name} \u2013 RSP MP, ${candidate.constituency.name}`;
+  const title = `${candidate.name} – RSP MP, ${candidate.constituency.name}`;
+  const topEdu = getTopEducation(candidate);
+  const eduSuffix = topEdu !== "N/A" ? ` Education: ${topEdu}.` : "";
+  const ageSuffix = candidate.age ? ` Age: ${candidate.age}.` : "";
+  const description = `Profile of ${candidate.name}${candidate.nameNepali ? ` (${candidate.nameNepali})` : ""}, RSP Member of Parliament from ${candidate.constituency.name}, ${candidate.constituency.district}, ${candidate.constituency.province}. ${candidate.electionType} seat in Nepal's 2026 General Election.${eduSuffix}${ageSuffix}`;
+
   return {
     title,
-    description: `Profile of ${candidate.name}, RSP Member of Parliament from ${candidate.constituency.name}, ${candidate.constituency.province}. Elected in the 2026 Nepal General Election.`,
+    description,
+    alternates: {
+      canonical: `/candidate/${candidate.id}`,
+    },
     openGraph: {
       title,
-      description: `RSP MP from ${candidate.constituency.name}`,
-      images: candidate.photo ? [{ url: candidate.photo }] : [],
+      description,
+      url: `/candidate/${candidate.id}`,
+      type: "profile",
+      images: candidate.photo
+        ? [
+            {
+              url: candidate.photo,
+              alt: `Photo of ${candidate.name}, RSP MP from ${candidate.constituency.name}`,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: candidate.photo ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: candidate.photo ? [candidate.photo] : [],
     },
   };
 }
@@ -131,29 +154,61 @@ export default async function CandidateProfilePage({ params }: Props) {
   const hasQuickFacts =
     candidate.dateOfBirth || candidate.age || candidate.profession || candidate.phone;
 
-  const jsonLd = {
+  const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: candidate.name,
-    alternateName: candidate.nameNepali,
-    birthDate: candidate.dateOfBirth,
+    alternateName: candidate.nameNepali || undefined,
+    birthDate: candidate.dateOfBirth || undefined,
     gender: candidate.gender,
     jobTitle: "Member of Parliament",
-    affiliation: {
+    worksFor: {
       "@type": "Organization",
+      name: "Parliament of Nepal",
+    },
+    affiliation: {
+      "@type": "PoliticalParty",
       name: "Rastriya Swatantra Party (RSP)",
     },
     url: `https://knowrspmp.vercel.app/candidate/${candidate.id}`,
-    image: candidate.photo,
-    description: candidate.biography,
+    image: candidate.photo || undefined,
+    description: candidate.biography || `${candidate.name} is a Member of Parliament representing ${candidate.constituency.name}, ${candidate.constituency.province} in Nepal's 2026 General Election.`,
+    nationality: {
+      "@type": "Country",
+      name: "Nepal",
+    },
     sameAs: candidate.socials?.map((social) => social.url) ?? [],
+    knowsAbout: candidate.profession || undefined,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Directory",
+        item: "https://knowrspmp.vercel.app",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: candidate.name,
+        item: `https://knowrspmp.vercel.app/candidate/${candidate.id}`,
+      },
+    ],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <div className="page-shell-wide page-section">
@@ -184,7 +239,7 @@ export default async function CandidateProfilePage({ params }: Props) {
                     <div className="relative h-40 w-40 overflow-hidden rounded-[2rem] border border-border/80 bg-muted/30 shadow-sm sm:h-48 sm:w-48">
                       <Image
                         src={candidate.photo}
-                        alt={candidate.name}
+                        alt={`${candidate.name}, RSP Member of Parliament from ${candidate.constituency.name}`}
                         fill
                         className="object-cover"
                       />

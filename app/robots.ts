@@ -6,9 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [],
+        disallow: ["/api/"],
       },
     ],
-    sitemap: "https://knowrspcandidate.vercel.app/sitemap.xml",
+    sitemap: "https://knowrspmp.vercel.app/sitemap.xml",
   };
 }
